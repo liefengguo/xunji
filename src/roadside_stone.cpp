@@ -1,10 +1,11 @@
 #include <ros/ros.h>
 #include <sensor_msgs/LaserScan.h>
 #include <cmath>
-// float angle_increment = 0.0138396155089;
+#include <std_msgs/Float32.h>
 
-void scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan_msg)
-{
+// float angle_increment = 0.0138396155089;
+ros::Publisher distance_pub;
+float calculateDistance(const sensor_msgs::LaserScan::ConstPtr& scan_msg){
   // Get scan parameters
   std::vector<float> ranges = scan_msg->ranges;
   float angle_increment = scan_msg->angle_increment;
@@ -114,18 +115,30 @@ void scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan_msg)
       median_distance = largest_cluster[size / 2];
   }
   ROS_INFO("Curb dis tance: %f ,size: %d,num_points:%d" ,median_distance ,size,num_points);
+  return median_distance;
 
-  
+}
+void scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan_msg)
+{
+  float distance = calculateDistance(scan_msg);
+  std_msgs::Float32 distance_msg;
+
+  distance_msg.data = distance;
+  distance_pub.publish(distance_msg);
+
 }
 
 int main(int argc, char** argv)
 {
   // Initialize ROS node
-  ros::init(argc, argv, "scan_processor");
+  ros::init(argc, argv, "roadside_dis");
   ros::NodeHandle nh;
+  
 
   // Subscribe to scan topic
-  ros::Subscriber sub_scan = nh.subscribe<sensor_msgs::LaserScan>("/scan", 1, scanCallback);
+  ros::Subscriber sub_scan = nh.subscribe<sensor_msgs::LaserScan>("/scan", 10, scanCallback);
+  distance_pub = nh.advertise<std_msgs::Float32>("distance_topic", 10);
+
 
   // Spin
   ros::spin();
