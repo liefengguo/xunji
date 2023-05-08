@@ -8,9 +8,13 @@
 #include <geometry_msgs/Twist.h>
 #include <sensor_msgs/NavSatFix.h>
 #include "sensor_msgs/LaserScan.h"
+#include <fstream>
 
 using namespace std;
 #define PI 3.1415926
+
+std::string file_path;
+
 
 // ros中GPS相应数据
 sensor_msgs::NavSatFix current_pos;
@@ -33,25 +37,41 @@ void load_aim_dis() {
     //aim_dis.push_back(make_pair(39.059032359, 117.130337657));
     //aim_dis.push_back(make_pair(39.059136819, 117.130365628));
     //aim_dis.push_back(make_pair(39.059306785, 117.130326288));
-    
-    
-    aim_dis.push_back(make_pair(39.060180335,117.130027318));
-    
-    
-    //aim_dis.push_back(make_pair(39.059480169, 117.130351141));
-    //aim_dis.push_back(make_pair(39.059503959, 117.130434119));
-    //aim_dis.push_back(make_pair(39.059539852, 117.130684711));
-    //aim_dis.push_back(make_pair(39.059539495, 117.131107941));
-    //aim_dis.push_back(make_pair(39.059505916, 117.131484378));
+    std::ifstream file(file_path);
 
-    aim_dis.push_back(make_pair(39.059537182, 117.132002841));
-    aim_dis.push_back(make_pair(39.059397789, 117.132048301));
-    //aim_dis.push_back(make_pair(39.059234097, 117.132047267));
-    //aim_dis.push_back(make_pair(39.058996941, 117.132034358));
-    aim_dis.push_back(make_pair(39.058744186, 117.132018874));
-    aim_dis.push_back(make_pair(39.058707784, 117.131850092));
-    aim_dis.push_back(make_pair(39.058654858, 117.131567478));
-    aim_dis.push_back(make_pair(0, 0));
+    // 读取文件内容
+    std::string line;
+    while (std::getline(file, line))
+    {
+        // 解析经纬度信息
+        double latitude, longitude;
+        std::sscanf(line.c_str(), "%lf,%lf", &latitude, &longitude);
+
+        // 将经纬度信息存入deque
+        aim_dis.push_back(std::make_pair(latitude, longitude));
+    }
+
+    // 关闭文件
+    file.close();
+    
+    
+    // aim_dis.push_back(make_pair(39.060180335,117.130027318));
+    
+    
+    // //aim_dis.push_back(make_pair(39.059480169, 117.130351141));
+    // //aim_dis.push_back(make_pair(39.059503959, 117.130434119));
+    // //aim_dis.push_back(make_pair(39.059539852, 117.130684711));
+    // //aim_dis.push_back(make_pair(39.059539495, 117.131107941));
+    // //aim_dis.push_back(make_pair(39.059505916, 117.131484378));
+
+    // aim_dis.push_back(make_pair(39.059537182, 117.132002841));
+    // aim_dis.push_back(make_pair(39.059397789, 117.132048301));
+    // //aim_dis.push_back(make_pair(39.059234097, 117.132047267));
+    // //aim_dis.push_back(make_pair(39.058996941, 117.132034358));
+    // aim_dis.push_back(make_pair(39.058744186, 117.132018874));
+    // aim_dis.push_back(make_pair(39.058707784, 117.131850092));
+    // aim_dis.push_back(make_pair(39.058654858, 117.131567478));
+    // aim_dis.push_back(make_pair(0, 0));
 }
 
 // 记录经纬度的值
@@ -337,6 +357,8 @@ int main(int argc, char **argv) {
     ros::init(argc, argv, "sub_node");
 
     ros::NodeHandle n("~");
+    n.param<std::string>("sub_node/file_path", file_path, "/output/position.txt");
+
     ros::Subscriber sub = n.subscribe("/fixposition/navsatfix", 1000, get_Now_Pos);
     ros::Subscriber subScan = n.subscribe("/scan",1000,ScanCallback);
 
