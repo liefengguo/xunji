@@ -72,3 +72,10 @@ add_dependencies(roadside_stone ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXP
 target_link_libraries(roadside_stone
   ${catkin_LIBRARIES}
 )
+add_executable(position_saver_node src/position_saver_node.cpp)
+ 
+add_dependencies(position_saver_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+ 
+target_link_libraries(position_saver_node
+  ${catkin_LIBRARIES}
+)

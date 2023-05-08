@@ -1,0 +1,11 @@
+<launch>
+  <!-- <arg name="file_path" default="$(find position_saver_node)/output/position.txt" /> -->
+  <!-- <arg name="topic_name" default="/djiros/rtk_position" /> -->
+  <!-- <arg name="topic_name" default="/fixposition/navsatfix" /> -->
+
+  <node pkg="xunji" type="position_saver_node" name="position_saver_node" output="screen">
+    <param name="file_path" value="$(find xunji)/output/position.txt" />
+    <param name="topic_name" value="/fixposition/navsatfix" />
+    <!-- <param name="topic_name" value="/djiros/rtk_position" /> -->
+  </node>
+</launch>
