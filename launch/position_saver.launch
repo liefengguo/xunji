@@ -5,7 +5,8 @@
 
   <node pkg="xunji" type="position_saver_node" name="position_saver_node" output="screen">
     <param name="file_path" value="$(find xunji)/output/position.txt" />
-    <param name="topic_name" value="/fixposition/navsatfix" />
-    <!-- <param name="topic_name" value="/djiros/rtk_position" /> -->
+    <!-- <param name="topic_name" value="/fixposition/navsatfix" /> -->
+    <param name="topic_name" value="/djiros/rtk_position" />
+    <param name="save_interval" value="1.0" />
   </node>
 </launch>
